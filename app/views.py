@@ -79,7 +79,7 @@ def register():
     data = request.get_json(silent=True) or {}
     required = ['email', 'username', 'password', 'first_name', 'last_name'
                 , 'date_of_birth', 'gender']
-    missing = [f for f in required if f not in data.get(f)]
+    missing = [f for f in required if not  data.get(f)]
     if missing:
         return bad(f'Missing fields: {", ".join(missing)}')
     if User.query.filter_by(email=data['email'].lower()).first():
@@ -252,7 +252,7 @@ def like_action():
     is_match = (act == 'like') and Like.is_mutual(me.profile.id, target.id)
     return jsonify({'action': act, 'is_match': is_match}), 200
 
-@app.route('/api.matches/', methods = ['GET'])
+@app.route('/api.matches', methods=['GET'])
 def get_matches():
     me = current_user()
     if not me or not me.profile:
