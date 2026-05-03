@@ -1,8 +1,13 @@
 <template>
   <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
     <div class="container">
-      <RouterLink class="navbar-brand fw-bold text-primary" to="/">
-        💕 DriftDater
+      <RouterLink class="navbar-brand d-flex align-items-center gap-2" to="/">
+        <img
+          src="../assets/images/DriftDaterLogo.png"
+          alt="DriftDater Logo"
+          class="navbar-logo"
+        />
+        <span>DriftDater</span>
       </RouterLink>
 
       <button

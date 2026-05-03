@@ -292,3 +292,14 @@ footer {
     padding: 1.5rem;
   }
 }
+/*----------------*/
+
+.auth-card-wide {
+  max-width: 520px;
+}
+
+.navbar-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
