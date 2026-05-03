@@ -90,3 +90,16 @@ body {
 .router-link-active {
   font-weight: 600;
 }
+
+.hero-section {
+  padding: 5rem 0 4rem;
+  background: linear-gradient(135deg, #f6f8ff 0%, #fff1f5 100%);
+}
+
+.feature-card {
+  padding: 1.5rem;
+  border: 1px solid #e9ecef;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.05);
+}
