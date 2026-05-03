@@ -1,38 +1,64 @@
 <template>
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">VueJS with Flask</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <RouterLink to="/" class="nav-link active">Home</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/about">About</RouterLink>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+  <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <div class="container">
+      <RouterLink class="navbar-brand fw-bold text-primary" to="/">
+        💕 DriftDater
+      </RouterLink>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#mainNavbar"
+        aria-controls="mainNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <nav id="mainNavbar" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/">Home</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/login">Login</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/register">Register</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/dashboard">Dashboard</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/browse">Browse</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/matches">Matches</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/messages">Messages</RouterLink>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </header>
 </template>
 
-<script setup>
-import { RouterLink } from "vue-router";
-</script>
+<script>
+import { RouterLink } from 'vue-router';
 
-<style>
-/* Add any component specific styles here */
-</style>
+export default {
+  name: 'AppHeader',
+  components: {
+    RouterLink
+  }
+};
+</script>

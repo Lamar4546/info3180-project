@@ -1,17 +1,15 @@
 <template>
-      <footer class="mt-5">
-          <div class="container">
-              <p>Copyright &copy {{ year }} Flask Inc.</p>
-          </div>
-      </footer>
+  <footer class="border-top bg-light py-3 mt-auto">
+    <div class="container text-center">
+      <small class="text-muted">
+        DriftDater &copy; 2026
+      </small>
+    </div>
+  </footer>
 </template>
 
-<script setup>
-import { ref } from "vue";
-
-const year = (new Date).getFullYear();
+<script>
+export default {
+  name: 'AppFooter'
+};
 </script>
-
-<style>
-/* Add any component specific styles here */
-</style>

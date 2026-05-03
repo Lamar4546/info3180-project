@@ -1,21 +1,26 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import AppHeader from "@/components/AppHeader.vue";
-import AppFooter from "@/components/AppFooter.vue";
-</script>
-
 <template>
-  <AppHeader />
+  <div class="app-wrapper">
+    <AppHeader />
 
-  <main>
-    <RouterView />
-  </main>
-  
-  <AppFooter />
+    <main class="app-main">
+      <RouterView />
+    </main>
+
+    <AppFooter />
+  </div>
 </template>
 
-<style>
-body {
-  padding-top: 75px;
-}
-</style>
+<script>
+import { RouterView } from 'vue-router';
+import AppHeader from './components/AppHeader.vue';
+import AppFooter from './components/AppFooter.vue';
+
+export default {
+  name: 'App',
+  components: {
+    RouterView,
+    AppHeader,
+    AppFooter
+  }
+};
+</script>
