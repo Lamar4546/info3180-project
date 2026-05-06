@@ -20,7 +20,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-      }
+      },
+     '/api/uploads': {        // ← add this
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      } 
     }
   }
 })

@@ -146,31 +146,47 @@ def get_profile(profile_id):
     is_owner = me and me.profile and me.profile.id == profile_id
     if not profile.is_public and not is_owner:
             return bad('Profile is private', 403)
-    return jsonify(profile.to_dict()), 200
+    return jsonify(profile.to_dict(include_private=True)), 200
+
+@app.route('/api/profiles/me', methods=['GET'])
+def get_my_profile():
+    user = current_user()
+    if not user:
+        return bad('Not authenticated', 401)
+    if not user.profile:
+        return bad('No profile found', 404)
+    return jsonify(user.profile.to_dict(include_private=True))
 
 @app.route('/api/profiles/me', methods=['PUT'])
 def update_profile():
-    me = current_user()
-    if not me:
+    user = current_user()
+    if not user:
         return bad('Not authenticated', 401)
     data = request.get_json(silent=True) or {}
-    profile = me.profile
-    for field in ['first_name', 'last_name', 'bio', 'parish', 'looking_for', 
+    profile = user.profile
+    for field in ['first_name', 'last_name', 'bio', 'parish', 'looking_for',
                   'age_min', 'age_max', 'is_public', 'gender']:
         if field in data:
-            setattr(profile, field, data[field])
+            val = data[field]
+            if field in ('age_min', 'age_max'):
+                val = int(val)
+            setattr(profile, field, val)
     if 'interests' in data:
         interests = []
         for name in data['interests']:
             name = name.lower().strip()
+            if not name:
+                continue
             i = Interest.query.filter_by(name=name).first()
             if not i:
                 i = Interest(name=name)
                 db.session.add(i)
             interests.append(i)
+        db.session.flush()
         profile.interests = interests
     db.session.commit()
     return jsonify(profile.to_dict(include_private=True)), 200
+
 
 @app.route('/api/profiles/me/photo', methods = ['POST'])
 def upload_photo():
@@ -357,6 +373,43 @@ def serve_vue(path):
         return send_from_directory(static_folder, 'index.html')
     else:
         return jsonify({'message': 'Vue app not built yet. Run npm run build.'}), 200
+    
+###
+# Favorites
+###
+
+@app.route('/api/favorites', methods=['GET'])
+def get_favorites():
+    user = current_user()
+    if not user or not user.profile:
+        return bad('Not authenticated', 401)
+    favs = user.profile.favorites
+    return jsonify([p.to_dict() for p in favs]), 200
+
+
+@app.route('/api/favorites/<int:profile_id>', methods=['POST'])
+def add_favorite(profile_id):
+    user = current_user()
+    if not user or not user.profile:
+        return bad('Not authenticated', 401)
+    target = Profile.query.get_or_404(profile_id)
+    if target not in user.profile.favorites:
+        user.profile.favorites.append(target)
+        db.session.commit()
+    return jsonify({'message': 'Added to favorites'}), 200
+
+
+@app.route('/api/favorites/<int:profile_id>', methods=['DELETE'])
+def remove_favorite(profile_id):
+    user = current_user()
+    if not user or not user.profile:
+        return bad('Not authenticated', 401)
+    target = Profile.query.get(profile_id)
+    if target and target in user.profile.favorites:
+        user.profile.favorites.remove(target)
+        db.session.commit()
+    return jsonify({'message': 'Removed from favorites'}), 200
+
 
 ###
 # The functions below should be applicable to all Flask apps.

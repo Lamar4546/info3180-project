@@ -8,7 +8,7 @@ class Config(object):
     DEBUG = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'Som3$ec5etK*y')
 
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER',os.path.join(os.path.dirname(__file__), 'static', 'uploads'))
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '..', 'app', 'static', 'uploads')
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB max file size
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
