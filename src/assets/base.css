@@ -928,3 +928,17 @@ Profile Card styles
     width: 100%;
   }
 }
+
+/*Logged In user navbar styles*/
+
+.logout-link {
+  padding: 0.5rem 0;
+  color: #4b5563 !important;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.logout-link:hover {
+  color: var(--color-primary) !important;
+  text-decoration: none;
+}
