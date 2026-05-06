@@ -9,20 +9,25 @@ profile_interests = db.Table('profile_interests',
     db.Column('interest_id', db.Integer, db.ForeignKey('interests.id'), primary_key=True)
 )
 
+# Many-to-many: profile favorites
+profile_favorites = db.Table('profile_favorites',
+    db.Column('owner_id', db.Integer, db.ForeignKey('profiles.id'), primary_key=True),
+    db.Column('fav_id',   db.Integer, db.ForeignKey('profiles.id'), primary_key=True)
+)
+
 
 class User(db.Model):
     __tablename__ = 'users'
 
     id           = db.Column(db.Integer, primary_key=True)
     email        = db.Column(db.String(120), unique=True, nullable=False, index=True)
-    username     = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    username     = db.Column(db.String(80),  unique=True, nullable=False, index=True)
     password     = db.Column(db.String(255), nullable=False)
     created_at   = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationships
-    profile      = db.relationship('Profile', back_populates='user', uselist=False, cascade='all, delete-orphan')
-    sent_messages     = db.relationship('Message', foreign_keys='Message.sender_id',    back_populates='sender',   lazy='dynamic')
-    received_messages = db.relationship('Message', foreign_keys='Message.receiver_id',  back_populates='receiver', lazy='dynamic')
+    profile           = db.relationship('Profile', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    sent_messages     = db.relationship('Message', foreign_keys='Message.sender_id',   back_populates='sender',   lazy='dynamic')
+    received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', back_populates='receiver', lazy='dynamic')
 
     def set_password(self, raw):
         self.password = generate_password_hash(raw)
@@ -36,42 +41,43 @@ class User(db.Model):
             'email':      self.email,
             'username':   self.username,
             'created_at': self.created_at.isoformat(),
-            'profile':    self.profile.to_dict() if self.profile else None
+            'profile':    self.profile.to_dict(include_private=True) if self.profile else None
         }
 
 
 class Profile(db.Model):
     __tablename__ = 'profiles'
 
-    id           = db.Column(db.Integer, primary_key=True)
-    user_id      = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    id            = db.Column(db.Integer, primary_key=True)
+    user_id       = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
 
-    # Basic info
-    first_name   = db.Column(db.String(80),  nullable=False)
-    last_name    = db.Column(db.String(80),  nullable=False)
-    date_of_birth = db.Column(db.Date,       nullable=False)
-    gender       = db.Column(db.String(20),  nullable=False)
-    bio          = db.Column(db.Text)
-    photo        = db.Column(db.String(255))          # filename stored in uploads/
+    first_name    = db.Column(db.String(80),  nullable=False)
+    last_name     = db.Column(db.String(80),  nullable=False)
+    date_of_birth = db.Column(db.Date,        nullable=False)
+    gender        = db.Column(db.String(20),  nullable=False)
+    bio           = db.Column(db.Text)
+    photo         = db.Column(db.String(255))
 
-    # Location / preferences
-    parish       = db.Column(db.String(100))          # e.g. "St. Catherine"
-    looking_for  = db.Column(db.String(20), default='Any')  # Male / Female / Any
-    age_min      = db.Column(db.Integer, default=18)
-    age_max      = db.Column(db.Integer, default=99)
+    # Location
+    parish        = db.Column(db.String(100))
 
-    # Visibility
-    is_public    = db.Column(db.Boolean, default=True)
+    # Preferences
+    looking_for   = db.Column(db.String(20), default='Any')
+    age_min       = db.Column(db.Integer, default=18)
+    age_max       = db.Column(db.Integer, default=99)
 
-    # Timestamps
-    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at   = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_public     = db.Column(db.Boolean, default=True)
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at    = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationships
-    user         = db.relationship('User', back_populates='profile')
-    interests    = db.relationship('Interest', secondary=profile_interests, backref='profiles', lazy='subquery')
-    likes_given  = db.relationship('Like', foreign_keys='Like.liker_id',  back_populates='liker',  lazy='dynamic')
-    likes_received = db.relationship('Like', foreign_keys='Like.liked_id', back_populates='liked', lazy='dynamic')
+    user           = db.relationship('User', back_populates='profile')
+    interests      = db.relationship('Interest', secondary=profile_interests, backref='profiles', lazy='subquery')
+    likes_given    = db.relationship('Like', foreign_keys='Like.liker_id',  back_populates='liker',  lazy='dynamic')
+    likes_received = db.relationship('Like', foreign_keys='Like.liked_id',  back_populates='liked',  lazy='dynamic')
+    favorites      = db.relationship('Profile', secondary=profile_favorites,
+                                     primaryjoin='Profile.id == profile_favorites.c.owner_id',
+                                     secondaryjoin='Profile.id == profile_favorites.c.fav_id',
+                                     lazy='subquery')
 
     @property
     def age(self):
@@ -80,25 +86,27 @@ class Profile(db.Model):
         return today.year - b.year - ((today.month, today.day) < (b.month, b.day))
 
     def to_dict(self, include_private=False):
+        photo_url = f'/api/uploads/{self.photo}' if self.photo else None
         data = {
-            'id':           self.id,
-            'user_id':      self.user_id,
-            'first_name':   self.first_name,
-            'last_name':    self.last_name,
-            'age':          self.age,
-            'gender':       self.gender,
-            'bio':          self.bio,
-            'photo':        self.photo,
-            'parish':       self.parish,
-            'looking_for':  self.looking_for,
-            'is_public':    self.is_public,
-            'interests':    [i.name for i in self.interests],
-            'created_at':   self.created_at.isoformat(),
+            'id':          self.id,
+            'user_id':     self.user_id,
+            'first_name':  self.first_name,
+            'last_name':   self.last_name,
+            'age':         self.age,
+            'gender':      self.gender,
+            'bio':         self.bio,
+            'photo':       self.photo,
+            'photo_url':   photo_url,
+            'parish':      self.parish,
+            'looking_for': self.looking_for,
+            'is_public':   self.is_public,
+            'interests':   [i.name for i in self.interests],
+            'created_at':  self.created_at.isoformat(),
         }
         if include_private:
             data.update({
-                'age_min':  self.age_min,
-                'age_max':  self.age_max,
+                'age_min': self.age_min,
+                'age_max': self.age_max,
             })
         return data
 

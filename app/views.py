@@ -52,6 +52,10 @@ def match_score(my_profile, other_profile):
     looking = my_profile.looking_for
     if looking == 'Any' or looking.lower() == other_profile.gender.lower():
         score += 25 
+    # Bonus for same parish
+    if my_profile.parish and other_profile.parish:
+        if my_profile.parish.lower().strip() == other_profile.parish.lower().strip():
+            score += 10
     return round(score, 1)
 
 
@@ -194,14 +198,14 @@ def list_interests():
 ###
 # Match Routes
 ###
-@app.route('/api/matches/browse', methods=['GET'])
+@app.route('/api/matches', methods=['GET'])
 def browse():
     me = current_user()
     if not me or not me.profile:
         return bad('Not authentcated.', 401)
     parish = request.args.get('parish', ''). strip()
-    age_min = int(request.args.get('age_min, 18'))
-    age_max = int(request.args.get('age_max, 99'))
+    age_min = int(request.args.get('age_min', 18))
+    age_max = int(request.args.get('age_max', 99))
     interest = request.args.get('interest', '').strip().lower()
     search = request.args.get('search', '').strip().lower()
 
