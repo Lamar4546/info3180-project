@@ -14,7 +14,7 @@ migrate = Migrate(app, db)
 # Allows localhost
 allowed_origins = [
     'http://localhost:5173',
-    'http://localhost:5000',
+    'http://localhost:8080',
 ]
 
 render_url = os.environ.get('RENDER_EXTERNAL_URL')

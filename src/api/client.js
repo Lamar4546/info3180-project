@@ -1,7 +1,7 @@
 // src/api/client.js
 
 // Central place for all requests from Vue to the Flask backend.
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = '';
 
 /**
  * Helper for making API requests.

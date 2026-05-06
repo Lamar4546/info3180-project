@@ -225,9 +225,9 @@ def browse():
             full_name = f"{p.first_name} {p.last_name}".lower()
             if search not in full_name and search not in (p.bio or '').lower():
                 continue
-            d = p.to_dict()
-            d['match_score'] = match_score(me.profile, p)
-            results.append(d)
+        d = p.to_dict()
+        d['match_score'] = match_score(me.profile, p)
+        results.append(d)
 
     results.sort(key=lambda r: r['match_score'], reverse=True)
     return jsonify(results), 200
