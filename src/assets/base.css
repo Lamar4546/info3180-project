@@ -686,3 +686,24 @@ Profile Card styles
   border-color: var(--color-primary);
   box-shadow: 0 0 0 0.15rem rgba(37, 99, 235, 0.18);
 }
+
+/*Browse Matches styles*/
+
+.browse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.browse-header h1 {
+  color: var(--color-heading);
+  font-weight: 750;
+  margin-bottom: 0.5rem;
+}
+
+.browse-header p {
+  color: var(--color-muted);
+  margin-bottom: 0;
+  max-width: 720px;
+}
