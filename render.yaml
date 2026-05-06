@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: driftdater
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      npm install
+      npm run build
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 4 main:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: driftdater-db
+          property: connectionString
+      - key: UPLOAD_FOLDER
+        value: app/static/uploads
+      - key: FLASK_ENV
+        value: production
+
+databases:
+  - name: driftdater-db
+    databaseName: driftdater
+    user: driftdater
+    plan: free

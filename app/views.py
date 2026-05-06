@@ -345,6 +345,19 @@ def message_history(partner_id):
     db.session.commit()
     return jsonify([msg.to_dict() for msg in msgs]), 200
 
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_vue(path):
+    """Serve the Vue frontend for all non-API routes."""
+    static_folder = os.path.join(current_app.root_path, 'static')
+    index_path = os.path.join(static_folder, 'index.html')
+    if path and os.path.exists(os.path.join(static_folder, path)):
+        return send_from_directory(static_folder, path)
+    elif os.path.exists(index_path):
+        return send_from_directory(static_folder, 'index.html')
+    else:
+        return jsonify({'message': 'Vue app not built yet. Run npm run build.'}), 200
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
