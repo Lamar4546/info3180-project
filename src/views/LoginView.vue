@@ -107,7 +107,8 @@ export default {
         this.successMessage = 'Login successful. Redirecting...';
 
         setTimeout(() => {
-          this.$router.push('/dashboard');
+          const redirectPath = this.$route.query.redirect || '/dashboard';
+          this.$router.push(redirectPath);
         }, 700);
       } catch (error) {
         this.errorMessage = error.message;

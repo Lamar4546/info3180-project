@@ -1,6 +1,7 @@
 // src/router/index.js
 
 import { createRouter, createWebHistory } from 'vue-router';
+import { getCurrentUser } from '../api/client';
 
 import HomeView from '../views/HomeView.vue';
 import AboutView from '../views/AboutView.vue';
@@ -15,9 +16,8 @@ import ConversationView from '../views/ConversationView.vue';
 
 /*
   Vue Router controls which page component appears for each URL.
-  Each route below connects a browser path to one Vue view.
+  meta.requiresAuth marks pages that should only be viewed after login.
 */
-
 const routes = [
   {
     path: '/',
@@ -42,39 +42,81 @@ const routes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: DashboardView
+    component: DashboardView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/profile/edit',
     name: 'edit-profile',
-    component: EditProfileView
+    component: EditProfileView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/browse',
     name: 'browse',
-    component: BrowseMatchesView
+    component: BrowseMatchesView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/matches',
     name: 'matches',
-    component: MatchesView
+    component: MatchesView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/messages',
     name: 'messages',
-    component: MessagesView
+    component: MessagesView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/messages/:partnerId',
     name: 'conversation',
     component: ConversationView,
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+});
+
+/*
+  Global route guard.
+
+  Before opening a protected route, Vue checks with Flask to see
+  whether a user is currently logged in.
+*/
+router.beforeEach(async (to) => {
+  if (!to.meta.requiresAuth) {
+    return true;
+  }
+
+  try {
+    await getCurrentUser();
+    return true;
+  } catch {
+    return {
+      path: '/login',
+      query: {
+        redirect: to.fullPath
+      }
+    };
+  }
 });
 
 export default router;
