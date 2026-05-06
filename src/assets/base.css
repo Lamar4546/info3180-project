@@ -942,3 +942,46 @@ Profile Card styles
   color: var(--color-primary) !important;
   text-decoration: none;
 }
+
+/*About View Styes*/
+
+.about-card {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.about-card h1 {
+  margin-bottom: 1rem;
+  color: var(--color-heading);
+  font-weight: 750;
+}
+
+.about-card > p {
+  color: var(--color-muted);
+}
+
+.about-feature {
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.about-feature span {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-size: 1.6rem;
+}
+
+.about-feature h2 {
+  margin-bottom: 0.5rem;
+  color: var(--color-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.about-feature p {
+  margin-bottom: 0;
+  color: var(--color-muted);
+}
