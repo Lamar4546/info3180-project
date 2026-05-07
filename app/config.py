@@ -15,5 +15,5 @@ class Config(object):
     _db_url = os.environ.get('DATABASE_URL', 'sqlite:///driftdater.db')
     SQLALCHEMY_DATABASE_URI = _db_url.replace('postgres://', 'postgresql://')
     SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = False  # False for local dev (no HTTPS)
+    SESSION_COOKIE_SECURE = os.environ.get('FLASK_ENV') == 'production'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
