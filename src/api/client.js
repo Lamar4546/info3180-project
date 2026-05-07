@@ -1,7 +1,7 @@
 // src/api/client.js
 
 // Central place for all requests from Vue to the Flask backend.
-const API_BASE_URL = '';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';;
 
 /**
  * Helper for making API requests.
