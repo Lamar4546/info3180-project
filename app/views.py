@@ -268,7 +268,7 @@ def like_action():
     is_match = (act == 'like') and Like.is_mutual(me.profile.id, target.id)
     return jsonify({'action': act, 'is_match': is_match}), 200
 
-@app.route('/api.matches', methods=['GET'])
+@app.route('/api/matches', methods=['GET'])
 def get_matches():
     me = current_user()
     if not me or not me.profile:
