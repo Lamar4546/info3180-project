@@ -210,7 +210,7 @@ def list_interests():
 ###
 # Match Routes
 ###
-@app.route('/api/matches', methods=['GET'])
+@app.route('/api/matches/browse', methods=['GET'])
 def browse():
     me = current_user()
     if not me or not me.profile:
