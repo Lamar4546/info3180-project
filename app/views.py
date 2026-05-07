@@ -64,10 +64,6 @@ def match_score(my_profile, other_profile):
 # Static Routes
 ###
 
-@app.route('/')
-def index():
-    return jsonify(message="This is the beginning of our API")
-
 
 @app.route('/api/uploads/<filename>')
 def uploaded_file(filename):
